@@ -1,33 +1,56 @@
-# MPC Package
+# Hexacopter Trajectory Tracking using MPC and LOS Guidance
 
-ROS package for Model Predictive Control (MPC) trajectory following with LOS guidance.
+This repository contains the implementation of a **real-time trajectory tracking framework for a hexacopter UAV** using **Model Predictive Control (MPC)** combined with **Line-of-Sight (LOS) guidance**.  
+The project was developed as part of an undergraduate thesis and focuses on bridging advanced control theory with practical real-world implementation on a PX4-based UAV platform.
 
-## Description
 
-This package contains MPC-based trajectory follower implementation for marine vessels or similar systems with:
-- Trajectory publisher with LOS guidance
-- MPC trajectory follower
-- Data logger for LOS guidance
+## Overview
 
-## Package Contents
+The proposed control architecture follows a **hierarchical control structure**:
+- **LOS guidance** is used to generate smooth and continuous reference trajectories.
+- **MPC** is implemented as an **outer-loop controller** to regulate the translational motion of the UAV.
+- **Attitude and angular rate stabilization** are handled by the built-in **PID controllers of the PX4 autopilot**.
 
-- `scripts/` - Python scripts for MPC controller, trajectory publisher, and data logger
-- `launch/` - Launch files for running the system
-- `src/` - Source code files
+The MPC controller runs **offboard** on a companion computer and communicates with PX4 via **MAVROS**.  
+The system is validated through both **Software-In-The-Loop (SITL)** simulation and **real-time flight experiments** on a physical hexacopter.
 
-## Usage
+## System Architecture
 
-To run the trajectory following with LOS guidance and logger:
+- Path reference → LOS guidance  
+- LOS output (position, velocity, yaw reference) → MPC outer loop  
+- MPC output (translational acceleration) → attitude and thrust setpoints  
+- PX4 inner loop (PID) → motor commands  
 
-```bash
-roslaunch mpc_pkg traj_los_guidance_with_logger.launch
-```
+This structure allows the use of advanced predictive control while maintaining compatibility with a commercial autopilot.
 
-## Requirements
+## Tools and Technologies
 
-- ROS (Robot Operating System)
-- Python dependencies (add specific requirements if needed)
+- **PX4 Autopilot**
+- **ROS (Robot Operating System)**
+- **MAVROS**
+- **Gazebo (SITL simulation)**
+- **Raspberry Pi** (companion computer)
+- **Model Predictive Control (MPC)**
+- **Line-of-Sight (LOS) guidance**
 
-## License
+## Key Features
 
-(Add your license here)
+- Real-time MPC-based outer-loop control for hexacopter UAV
+- LOS guidance for smooth 3D trajectory tracking
+- Helical trajectory tracking in three-dimensional space
+- Simulation-to-hardware workflow (SITL → real flight)
+- Comparative evaluation against PX4 PID position control
+
+## Experimental Results
+
+Real-time flight experiments demonstrate that the proposed MPC–LOS framework:
+- Achieves stable and smooth tracking of a 3D helical trajectory
+- Reduces trajectory tracking RMSE by **9.46%**
+- Improves mission completion time by **18.2%**
+compared to the conventional PX4 PID-based position controller.
+
+## Notes
+
+- This repository focuses on **trajectory tracking**, not low-level motor control.
+- MPC parameters are tuned for real-time feasibility on embedded hardware.
+- The code is provided for research and educational purposes.
